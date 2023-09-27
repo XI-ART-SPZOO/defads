@@ -16,7 +16,7 @@ local M = {
 	is_show_ads_dtime = 300,
 	game_start = function() end,
 	game_stop = function() end,
-	log_ad_event = function() end
+	log_ad_revenue = function() end
 }
 
 local function i_closed(inc) 
@@ -51,7 +51,14 @@ local function ironsource_listener(self, message_id, message)
 	print("ADS:IS LISTENER",message_id, message)
 	local function log_ad( m )
 		if not m then return end
-		local e = { adplatform = "ironSource", source = m.ad_network, format = m.ad_unit, unit_name = m.instance_name, currency = "USD", value = m.revenue }
+		local e = { 
+			adplatform = "ironSource", 
+			source = m.ad_network, 
+			format = m.ad_unit, 
+			unit_name = m.instance_name, 
+			currency = "USD", 
+			value = m.revenue 
+		}
 		-- instance_id = "ca-app-pub-7455545751289212/4693124441",
 		-- instance_name = "Bidding", 		segment_name = "",
 		-- precision = "BID", 				country = "PL",
@@ -59,7 +66,7 @@ local function ironsource_listener(self, message_id, message)
 		-- encrypted_cpm = "", 				ad_network = "admob",
 		-- ab = "A", 						revenue = 0.121511903,
 		-- event = 3, 						lifetime_revenue = 3.289511903
-		if M.log_ad_event then M.log_ad_event( e ) end
+		if M.log_ad_revenue then M.log_ad_revenue( e ) end
 	end
 	if message_id == ironsource.MSG_INIT then
 		if message.event == ironsource.EVENT_INIT_COMPLETE then 
