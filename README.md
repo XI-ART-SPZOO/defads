@@ -1,5 +1,5 @@
 # DefAds
-A module with a multiplatform ads helper tool for Defold
+A module with a multiplatform ads helper tool for Defold.
 Work with the following extensions/adplatforms:
 - IronSource
 - ApplovinMax (Android)
