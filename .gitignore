@@ -1,0 +1,8 @@
+.externalToolBuilders
+.DS_Store
+.lock-wscript
+build
+.project
+.cproject
+builtins
+.internal

@@ -1,0 +1,13 @@
+[project]
+title = DefAds
+version = 0.1
+
+[library]
+include_dirs = defads
+
+[input]
+game_binding = /example/main.input_bindingc
+
+[bootstrap]
+main_collection = /example/main.collectionc
+
