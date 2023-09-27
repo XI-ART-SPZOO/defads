@@ -266,7 +266,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 	end
 
 	if M.adplatform == "none" then ads_after_init() end
-
+	M.set_mediation()
 end
 
 function M.set_mediation(m,p)
