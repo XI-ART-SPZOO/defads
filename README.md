@@ -1,5 +1,15 @@
 # DefAds
-A module with a set of multiplatfoorm ads functions for Defold
+A module with a set of multiplatfoorm ads helper for Defold
+Work with the following extensions/adplatforms:
+- IronSource
+- ApplovinMax (Android)
+- Poki
+- GameDistribution
+- Yandex
+- CrazyGames
+- FBistance
+- And simulate AD flow in Defold editor
+
 
 ## Installation
 You can use DefMath in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your game.project file and in the dependencies field under project add:
@@ -52,5 +62,20 @@ local cbs = {
 local p = "amazon" 
 
 DefAds.init(ids[,cbs][,p])
+```
+Interstitial ads:
+```
+DefAds.is_ads()
+DefAds.load_ads()
+DefAds.show_ads(on_close)
+	-- on_close = function() end
+```
+Rewarded ads:
+```
+DefAds.is_rewarded()
+DefAds.load_rewarded()
+DefAds.show_rewarded(on_reward, on_close)
+	-- on_reward = function() end
+	-- on_close = function() end
 ```
 
