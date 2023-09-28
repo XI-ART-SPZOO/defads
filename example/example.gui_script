@@ -1,0 +1,37 @@
+local druid = require("druid.druid")
+
+local function on_button_ads_callback(self)
+	print("The ADS button clicked!")
+	DefAds.show_ads(function() print("ADS closed") end)
+end
+
+local function on_button_rewarded_callback(self)
+	print("The REWARDED button clicked!")
+	DefAds.show_rewarded(function() print("REWARD earned") end, function() print("REWARDED closed") end)
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.druid = druid.new(self)
+	self.button_ads = self.druid:new_button("button-ads", on_button_ads_callback)
+	self.button_rewarded = self.druid:new_button("button-rewarded", on_button_rewarded_callback)
+end
+
+function final(self)
+	self.druid:final()
+end
+
+function update(self, dt)
+	self.druid:update(dt)
+end
+
+function on_message(self, message_id, message, sender)
+	self.druid:on_message(message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+	return self.druid:on_input(action_id, action)
+end
+
+function on_reload(self)
+end

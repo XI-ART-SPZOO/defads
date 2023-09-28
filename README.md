@@ -19,7 +19,7 @@ You can use DefAds in your own project by adding this project as a [Defold libra
 Once added, you must require the main Lua module via
 
 ```
-[local] DefAds = require("defads.defads")
+DefAds = require("defads.defads")
 ```
 Then you must init DefAds to use
 ```

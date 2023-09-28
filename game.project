@@ -1,6 +1,7 @@
 [project]
 title = DefAds
 version = 0.1
+dependencies#0 = https://github.com/XI-ART-SPZOO/druid/archive/refs/heads/master.zip
 
 [library]
 include_dirs = defads
@@ -10,4 +11,11 @@ game_binding = /example/main.input_bindingc
 
 [bootstrap]
 main_collection = /example/main.collectionc
+
+[display]
+width = 640
+height = 960
+
+[script]
+shared_state = 1
 

@@ -190,8 +190,8 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 	M.adplatform = p or "none"
 	print("ADS:ADS --> Init ADS with adplatform =", M.adplatform)
 
-	M.before_show = p.before_show or M.before_show
-	M.after_show = p.after_show or M.after_show
+	M.before_show = cbs.before_show or M.before_show
+	M.after_show = cbs.after_show or M.after_show
 	M.initialized = true
 
 	if maxsdk then 
@@ -236,7 +236,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 		crazy_games.add_event_listeners()
 		-- crazy_games.clear_event_listeners()
 		M.game_start = function() crazy_games.gameplay_start() end
-		M.game_stop = function()crazy_games.gameplay_stop() end
+		M.game_stop = function() crazy_games.gameplay_stop() end
 		jstodef.add_listener(function(_, message_id, message)  
 			if (message_id == "CrazyGame_adStared") then  
 				M.before_show(message)
