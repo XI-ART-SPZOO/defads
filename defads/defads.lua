@@ -271,12 +271,14 @@ end
 
 function M.launch_test()
 	print("Test ADS integration")
+	print("ADS provider -> ", M.adplatform)
 	if ironsource then 
-		print("ADS provider -> ironsource")
 		-- print("ADS -> validate integration")
 		-- ironsource.validate_integration()
 		print("ADS -> launch test suite")
 		ironsource.launch_test_suite()
+	else
+		print("ADS provider has no test application!")
 	end
 end
 
