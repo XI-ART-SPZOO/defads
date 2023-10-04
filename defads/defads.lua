@@ -48,7 +48,7 @@ local function ads_after_init()
 end
 
 local function ironsource_listener(self, message_id, message)
-	print("ADS:IS LISTENER",message_id, message)
+	pprint("ADS:IS LISTENER",message_id, message)
 	local function log_ad( m )
 		if not m then return end
 		local e = { 
@@ -123,7 +123,7 @@ local function ironsource_listener(self, message_id, message)
 end
 
 local function maxsdk_listener(self, message_id, message)
-	print("ADS:MAX LISTENER", message_id, message)
+	pprint("ADS:MAX LISTENER", message_id, message)
 	if message_id == maxsdk.MSG_INITIALIZATION then 
 		ads_after_init()
 	elseif message_id == maxsdk.MSG_INTERSTITIAL then
