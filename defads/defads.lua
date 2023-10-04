@@ -269,6 +269,17 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 	M.set_mediation()
 end
 
+function M.launch_test()
+	print("Test ADS integration")
+	if ironsource then 
+		print("ADS provider -> ironsource")
+		-- print("ADS -> validate integration")
+		-- ironsource.validate_integration()
+		print("ADS -> launch test suite")
+		ironsource.launch_test_suite()
+	end
+end
+
 function M.set_mediation(m,p)
 	if not M.mediate and (M.adplatform=="apple" or M.adplatform=="google") and m then 
 		M.mediation = { list = m, counter = 1, providers = p }
