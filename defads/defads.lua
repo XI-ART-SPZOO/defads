@@ -204,6 +204,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 		maxsdk.set_verbose_logging(true)
 		maxsdk.set_callback(maxsdk_listener)
 		maxsdk.initialize()
+		M.adplatform = "maxsdk"
 	end
 
 	if ironsource then 
@@ -216,6 +217,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 			ironsource.set_metadata("is_test_suite", "enable")
 		end
 		ironsource.init(app_key)
+		M.adplatform = "ironsource"
 	end
 
 	if fbinstant then
@@ -225,6 +227,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 			M.supported_apis[api] = true
 		end
 		ads_after_init()
+		M.adplatform = "fbinstant"
 	end
 
 	if yagames then
