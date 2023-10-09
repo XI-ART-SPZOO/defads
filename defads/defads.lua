@@ -392,18 +392,20 @@ function M.load_ads()
 		ironsource.load_interstitial()
 	end
 	if fbinstant and M.supported_apis["getInterstitialAdAsync"] and not M.fbinstant.interstitial.ready then
-		print("ADS:LOAD FBINSTATNT GET interstitial")
-		fbinstant.get_interstitial_ad(ad_ids.facebook.interstitial, function(s, id, error)
-			if not error then
-				M.fbinstant.interstitial.id = id
-				print("ADS:LOAD FBINSTATNT LOAD interstitial ", id)
-				fbinstant.load_interstitial_ad(id, function(s, success, error) 
-					if success then
-						M.fbinstant.interstitial.ready = true
-					else print("ADS:SHOW FBINSTATNT LOAD interstitial ERROR: ", error) end
-				end)
-			else print("ADS:SHOW FBINSTATNT GET interstitial ERROR: ", error) end
-		end)
+		if ad_ids.facebook.interstitial then
+			print("ADS:LOAD FBINSTATNT GET interstitial")
+			fbinstant.get_interstitial_ad(ad_ids.facebook.interstitial, function(s, id, error)
+				if not error then
+					M.fbinstant.interstitial.id = id
+					print("ADS:LOAD FBINSTATNT LOAD interstitial ", id)
+					fbinstant.load_interstitial_ad(id, function(s, success, error) 
+						if success then
+							M.fbinstant.interstitial.ready = true
+						else print("ADS:SHOW FBINSTATNT LOAD interstitial ERROR: ", error) end
+					end)
+				else print("ADS:SHOW FBINSTATNT GET interstitial ERROR: ", error) end
+			end)
+		end
 	end
 end
 
@@ -467,18 +469,20 @@ function M.load_rewarded()
 	--
 	end
 	if fbinstant and M.supported_apis["getRewardedVideoAsync"] and not M.fbinstant.rewarded.ready then
-		print("ADS:LOAD FBINSTATNT GET rewarded")
-		fbinstant.get_rewarded_video(ad_ids.facebook.rewarded, function(s, id, error)
-			if not error then
-				M.fbinstant.rewarded.id = id
-				print("ADS:LOAD FBINSTATNT LOAD rewarded ", id)
-				fbinstant.load_rewarded_video(id, function(s, success, error) 
-					if success then
-						M.fbinstant.rewarded.ready = true
-					else print("ADS:LOAD FBINSTATNT LOAD rewarded ERROR: ", error) end
-				end)
-			else print("ADS:LOAD FBINSTATNT GET rewarded ERROR: ", error) end
-		end)
+		if ad_ids.facebook.rewarded then
+			print("ADS:LOAD FBINSTATNT GET rewarded")
+			fbinstant.get_rewarded_video(ad_ids.facebook.rewarded, function(s, id, error)
+				if not error then
+					M.fbinstant.rewarded.id = id
+					print("ADS:LOAD FBINSTATNT LOAD rewarded ", id)
+					fbinstant.load_rewarded_video(id, function(s, success, error) 
+						if success then
+							M.fbinstant.rewarded.ready = true
+						else print("ADS:LOAD FBINSTATNT LOAD rewarded ERROR: ", error) end
+					end)
+				else print("ADS:LOAD FBINSTATNT GET rewarded ERROR: ", error) end
+			end)
+		end
 	end
 end
 
