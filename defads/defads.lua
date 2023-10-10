@@ -16,7 +16,8 @@ local M = {
 	is_show_ads_dtime = 300,
 	game_start = function() end,
 	game_stop = function() end,
-	log_ad_revenue = function() end
+	log_ad_revenue = function() end,
+	is_web = false
 }
 
 local function i_closed(inc) 
@@ -185,6 +186,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 			elseif fbinstant then p = "instant" 
 			elseif poki_sdk then p = "poki" 
 			end
+			M.is_web = not not p
 		end
 	end
 	M.adplatform = p or "none"
