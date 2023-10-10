@@ -236,10 +236,14 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 		M.yagames = true
 	elseif M.adplatform=="crazygames" then
 		M.crazygames = true
-		crazy_games.init()  
-		crazy_games.init_listeners()  
-		crazy_games.add_event_listeners()
-		-- crazy_games.clear_event_listeners()
+		if crazy_games.init then 
+			crazy_games.init()  
+			crazy_games.init_listeners()  
+			crazy_games.add_event_listeners()
+			-- crazy_games.clear_event_listeners()
+		else
+			crazy_games.game_loading_stop()
+		end
 		M.game_start = function() crazy_games.gameplay_start() end
 		M.game_stop = function() crazy_games.gameplay_stop() end
 		jstodef.add_listener(function(_, message_id, message)  
