@@ -169,7 +169,7 @@ end
 function M.restore()
 end
 
-function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_stop, log_ad_event }
+function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_stop, log_ad_revenue }
 	ad_ids = ids
 
 	if p then 
@@ -194,6 +194,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 
 	M.before_show = cbs.before_show or M.before_show
 	M.after_show = cbs.after_show or M.after_show
+	M.log_ad_revenue = cbs.log_ad_revenue or M.log_ad_revenue
 	M.initialized = true
 
 	if maxsdk then 
