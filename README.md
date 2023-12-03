@@ -14,7 +14,7 @@ Work with the following extensions/adplatforms:
 ## Installation
 You can use DefAds in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your game.project file and in the dependencies field under project add:
 
-	https://github.com/BigButton-Co/defads/archive/master.zip
+	https://github.com/XI-ART-SPZOO/defads/archive/master.zip
   
 Once added, you must require the main Lua module via
 
@@ -52,11 +52,11 @@ local ids = {
 }
 
 local cbs = { 
-	before_show = function(), 
-	after_show = function(), 
-	game_start = function(), 
-	game_stop, = function(),
-	log_ad_revenue = function(p)
+	before_show = function() end, 
+	after_show = function() end, 
+	game_start = function() end, 
+	game_stop = function() end,
+	log_ad_revenue = function(p) end -- p = { adplatform = .., source = .., format = .., unit_name = .., currency = .., value = .. }
 }
 
 local adplatform = "amazon" or "google" or "apple" or "gdsdk" or "poki" or "crazygames" or "yagames" or "fbinstant"
@@ -66,17 +66,14 @@ DefAds.init(ids,cbs[,adplatform])
 ```
 Interstitial ads:
 ```
-DefAds.is_ads()
+DefAds.is_ads() -- true/false
 DefAds.load_ads()
 DefAds.show_ads(on_close)
-	-- on_close = function() end
 ```
 Rewarded ads:
 ```
-DefAds.is_rewarded()
+DefAds.is_rewarded() -- true/false
 DefAds.load_rewarded()
 DefAds.show_rewarded(on_reward, on_close)
-	-- on_reward = function() end
-	-- on_close = function() end
 ```
 
