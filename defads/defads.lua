@@ -58,7 +58,16 @@ local function ironsource_listener(self, message_id, message)
 			format = m.ad_unit, 
 			unit_name = m.instance_name, 
 			currency = "USD", 
-			value = m.revenue 
+			value = m.revenue,
+			country = m.country,
+			precision = m.precision,
+			auction_id = m.auction_id,
+			instance_id = m.instance_id,
+			auction_id = m.auction_id,
+			encrypted_cpm = m.encrypted_cpm or "",
+			segment_name = m.segment_name
+			lifetime_revenue = m.lifetime_revenue
+			event = m.event
 		}
 		-- instance_id = "ca-app-pub-7455545751289212/4693124441",
 		-- instance_name = "Bidding", 		segment_name = "",
