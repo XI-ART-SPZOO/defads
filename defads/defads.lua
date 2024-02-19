@@ -64,9 +64,9 @@ local function ironsource_listener(self, message_id, message)
 			auction_id = m.auction_id,
 			instance_id = m.instance_id,
 			auction_id = m.auction_id,
-			encrypted_cpm = m.encrypted_cpm or "",
-			segment_name = m.segment_name
-			lifetime_revenue = m.lifetime_revenue
+			encrypted_cpm = m.encrypted_cpm,
+			segment_name = m.segment_name,
+			lifetime_revenue = m.lifetime_revenue,
 			event = m.event
 		}
 		-- instance_id = "ca-app-pub-7455545751289212/4693124441",
