@@ -1,6 +1,7 @@
 local ad_ids = {}
 
 local M = {
+	sdk_config = {},
 	supported_apis = {},
 	reward = nil,
 	fbinstant = {
@@ -132,6 +133,88 @@ local function ironsource_listener(self, message_id, message)
 	end
 end
 
+local function applovin_listener(self, name, params)
+	print("ADS:IS --> event:", name) 
+	pprint(params)
+	local function log_ad( m )
+		if not m then return end
+		pprint(m)
+		local e = { 
+			adplatform = "applovin", 
+			source = m.networkName, 
+			format = m.adUnitIdentifier, 
+			unit_name = m.adUnitIdentifier, 
+			placement = m.placement, 
+			network_placement = m.placement,
+			currency = "USD", 
+			dsp_name = m.dspName,
+			value = m.revenue,
+			country = M.sdk_config.countryCode,
+			precision = m.revenuePrecision,
+			auction_id = m.auction_id,
+			instance_id = m.instance_id,
+			auction_id = m.auction_id,
+			encrypted_cpm = m.encrypted_cpm,
+			segment_name = m.segment_name,
+			lifetime_revenue = m.lifetime_revenue,
+			event = m.event
+		}
+		if M.log_ad_revenue then M.log_ad_revenue( e ) end
+	end
+	
+	-- "OnInterstitialAdLoadedEvent", "OnInterstitialAdLoadFailedEvent",
+	-- "OnInterstitialAdDisplayedEvent", "OnInterstitialAdDisplayFailedEvent",
+	-- "OnInterstitialAdHiddenEvent",
+	-- "OnInterstitialAdClickedEvent",
+	-- "OnInterstitialAdRevenuePaidEvent",
+	-- 
+	-- "OnRewardedAdLoadedEvent", "OnRewardedAdLoadFailedEvent",
+	-- "OnRewardedAdDisplayedEvent", "OnRewardedAdDisplayFailedEvent",
+	-- "OnRewardedAdHiddenEvent",
+	-- "OnRewardedAdClickedEvent",
+	-- "OnRewardedAdReceivedRewardEvent",
+	-- "OnRewardedAdRevenuePaidEvent",
+	-- 
+	-- "OnBannerAdLoadedEvent", "OnBannerAdLoadFailedEvent",
+	-- "OnBannerAdClickedEvent", "OnBannerAdExpandedEvent",
+	-- "OnBannerAdCollapsedEvent",
+	-- "OnBannerAdRevenuePaidEvent",
+	-- "OnMRecAdLoadedEvent", "OnMRecAdLoadFailedEvent",
+	-- "OnMRecAdClickedEvent",
+	-- "OnMRecAdExpandedEvent",
+	-- "OnMRecAdCollapsedEvent",
+	-- "OnMRecAdRevenuePaidEvent",
+	
+	if name == "OnSdkInitializedEvent" then
+		print("ADS:IS --> Ironsource initialized!")
+		M.sdk_config.countryCode = params.countryCode
+		M.sdk_config.consentFlowUserGeography = params.consentFlowUserGeography
+		M.sdk_config.isTestModeEnabled = params.isTestModeEnabled
+		M.sdk_config.appTrackingStatus = params.appTrackingStatus
+		ads_after_init()
+		
+	elseif name == "OnInterstitialAdLoadedEvent" or
+	name == "OnRewardedAdLoadedEvent" or
+	name == "OnBannerAdLoadedEvent" or
+	name == "OnMRecAdLoadedEvent" then
+		
+	elseif name == "OnInterstitialAdLoadFailedEvent" or
+	name == "OnRewardedAdLoadFailedEvent" or
+	name == "OnBannerAdLoadFailedEvent" or
+	name == "OnMRecAdLoadFailedEvent" then
+
+	elseif name == "OnInterstitialAdHiddenEvent" then
+		i_closed()
+	elseif name == "OnRewardedAdHiddenEvent" then
+		r_closed()
+	elseif name == "OnRewardedAdReceivedRewardEvent" then
+		r_earned()
+	elseif name == "OnInterstitialAdRevenuePaidEvent" or
+	name == "OnRewardedAdRevenuePaidEvent" then
+		log_ad( params )
+	end
+end
+
 local function maxsdk_listener(self, message_id, message)
 	pprint("ADS:MAX LISTENER", message_id, message)
 	if message_id == maxsdk.MSG_INITIALIZATION then 
@@ -208,6 +291,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 
 	if maxsdk then 
 		print("ADS:INIT --> Init maxsdk")
+		M.mediation = { list = { "maxsdk" }, counter = 1, providers = { "maxsdk" } }
 		maxsdk.set_fb_data_processing_options("LDU", 0, 0)
 		maxsdk.set_has_user_consent(true) -- GDPR
 		maxsdk.set_is_age_restricted_user(false)
@@ -216,11 +300,24 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 		maxsdk.set_verbose_logging(true)
 		maxsdk.set_callback(maxsdk_listener)
 		maxsdk.initialize()
-		M.adplatform = "maxsdk"
+	end
+
+	if applovin then 
+		print("ADS:INIT --> Init applovin")
+		M.mediation = { list = { "applovin" }, counter = 1, providers = { "applovin" } }
+		applovin.set_callback(applovin_listener)
+		applovin.set_terms_and_privacy_policy_flow_enabled(true)
+		applovin.set_privacy_policy_url("https://www.bigbutton.co/privacy-policy/") -- mandatory
+		-- applovin.set_terms_of_service_url("https://your_company_name.com/terms/") -- optional
+		applovin.initialize(ad_ids.applovin[M.adplatform].sdk_key)
+		if _DEBUG then
+			applovin.set_verbose_logging_enabled(true)
+		end
 	end
 
 	if ironsource then 
 		print("ADS:INIT --> Init ironsource")
+		M.mediation = { list = { "ironsource" }, counter = 1, providers = { "ironsource" } }
 		local app_key = ad_ids.ironsource[M.adplatform].app_key
 		ironsource.set_callback(ironsource_listener)
 		ironsource.set_consent(true)
@@ -229,7 +326,6 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 			ironsource.set_metadata("is_test_suite", "enable")
 		end
 		ironsource.init(app_key)
-		M.adplatform = "ironsource"
 	end
 
 	if fbinstant then
@@ -296,16 +392,17 @@ function M.launch_test()
 		-- ironsource.validate_integration()
 		print("ADS -> launch test suite")
 		ironsource.launch_test_suite()
+	elseif applovin then 
+		print("ADS -> launch mediation debugger")
+		applovin.show_mediation_debugger()
 	else
 		print("ADS provider has no test application!")
 	end
 end
 
 function M.set_mediation(m,p)
-	if not M.mediate and (M.adplatform=="apple" or M.adplatform=="google") and m then 
+	if m and p and (M.adplatform=="apple" or M.adplatform=="google") then 
 		M.mediation = { list = m, counter = 1, providers = p }
-	else
-		M.mediation = { list = { M.adplatform }, counter = 1, providers = { M.adplatform } }
 	end
 end
 
@@ -331,6 +428,9 @@ local show_helper = {
 		ironsource = function(sl) 
 			sl("ironsource"); ironsource.show_rewarded_video() 
 		end,
+		applovin = function(sl) 
+			sl("applovin"); applovin.show_rewarded_ad(ad_ids.applovin[M.adplatform].rewarded) 
+		end
 	},
 	ads = {
 		maxsdk = function() 
@@ -338,6 +438,9 @@ local show_helper = {
 		end,
 		ironsource = function(sl) 
 			ironsource.show_interstitial() 
+		end,
+		applovin = function() 
+			applovin.show_interstitial(ad_ids.applovin[M.adplatform].interstitial) 
 		end
 	}
 } 
@@ -347,6 +450,7 @@ function M.show_next_mobile_ads( atype, sl, bs )
 	local loaded = {
 		maxsdk = atype=="rewarded" and (maxsdk and maxsdk.is_rewarded_loaded()) or (maxsdk and maxsdk.is_interstitial_loaded()),
 		ironsource = atype=="rewarded" and (ironsource and ironsource.is_rewarded_video_available()) or (ironsource and ironsource.is_interstitial_ready()),
+		applovin = atype=="rewarded" and (applovin and applovin.is_rewarded_ad_ready(ad_ids.applovin[M.adplatform].rewarded)) or (applovin and applovin.is_interstitial_ready(ad_ids.applovin[M.adplatform].interstitial)),
 	}
 	pprint("ADS: mediation.list", M.mediation.list)
 	print("ADS: mediation.counter",M.mediation.counter)
@@ -381,7 +485,9 @@ function M.is_banner()
 end
 
 function M.is_ads()
+	if not M.initialized then return false end
 	local f = (maxsdk and maxsdk.is_interstitial_loaded())
+	f = f or (applovin and applovin.is_interstitial_ready(ad_ids.applovin[M.adplatform].interstitial))
 	f = f or (ironsource and ironsource.is_interstitial_ready())
 	-- FBINSTANT
 	f = f or M.fbinstant.interstitial.ready
@@ -402,6 +508,10 @@ function M.load_ads()
 	if maxsdk and (not maxsdk.is_interstitial_loaded()) then 
 		print("ADS:LOAD Load maxsdk interstitial:", ad_ids.maxsdk[M.adplatform].interstitial)
 		maxsdk.load_interstitial(ad_ids.maxsdk[M.adplatform].interstitial)
+	end
+	if applovin and (not applovin.is_interstitial_ready(ad_ids.applovin[M.adplatform].interstitial)) then 
+		print("ADS:LOAD Load applovin interstitial:", ad_ids.applovin[M.adplatform].interstitial)
+		applovin.load_interstitial(ad_ids.applovin[M.adplatform].interstitial)
 	end
 	if ironsource and (not ironsource.is_interstitial_ready()) then 
 		print("ADS:LOAD Load ironsource interstitial")
@@ -460,7 +570,9 @@ function M.show_ads( onComplete )
 end
 
 function M.is_rewarded()
+	if not M.initialized then return false end
 	local f = (maxsdk and maxsdk.is_rewarded_loaded())
+	f = f or (applovin and applovin.is_rewarded_ad_ready(ad_ids.applovin[M.adplatform].rewarded))
 	f = f or (ironsource and ironsource.is_rewarded_video_available())
 	-- FBINSTANT
 	f = f or M.fbinstant.rewarded.ready
@@ -480,6 +592,9 @@ end
 function M.load_rewarded()
 	if maxsdk and (not maxsdk.is_rewarded_loaded()) then 
 		maxsdk.load_rewarded(ad_ids.maxsdk[M.adplatform].rewarded)
+	end
+	if applovin and (not applovin.is_rewarded_ad_ready(ad_ids.applovin[M.adplatform].rewarded)) then 
+		applovin.load_rewarded_ad(ad_ids.applovin[M.adplatform].rewarded)
 	end
 	if ironsource and (not ironsource.is_rewarded_video_available()) then 
 	--
