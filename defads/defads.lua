@@ -18,6 +18,8 @@ local M = {
 	game_start = function() end,
 	game_stop = function() end,
 	log_ad_revenue = function() end,
+	show_consent = function(f) M.consent = f or M.consent; return M.consent end,
+	consent = nil,
 	is_web = false
 }
 
@@ -84,11 +86,14 @@ local function ironsource_listener(self, message_id, message)
 			print("ADS:IS --> Ironsource initialized!")
 			if _DEBUG then pprint(ironsource.validate_integration()) end
 			ads_after_init() 
-			if not Data.Options:get("consent") then 
+			-- if not Data.Options:get("consent") then 
+			if not M.show_consent() then 
 				ironsource.load_consent_view("pre")
-				Data.Options:set("consent",true)
-				Data.Options:save()
+				M.show_consent(true)
 			end
+			-- 	Data.Options:set("consent",true)
+			-- 	Data.Options:save()
+			-- end
 		end
 	elseif message_id == ironsource.MSG_REWARDED then
 		if message.event == ironsource.EVENT_AD_AVAILABLE then
@@ -287,6 +292,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 	M.before_show = cbs.before_show or M.before_show
 	M.after_show = cbs.after_show or M.after_show
 	M.log_ad_revenue = cbs.log_ad_revenue or M.log_ad_revenue
+	M.show_consent = cbs.show_consent or M.show_consent
 	M.initialized = true
 
 	if maxsdk then 
