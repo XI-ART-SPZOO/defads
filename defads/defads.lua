@@ -18,10 +18,10 @@ local M = {
 	game_start = function() end,
 	game_stop = function() end,
 	log_ad_revenue = function() end,
-	show_consent = function(f) M.consent = f or M.consent; return M.consent end,
 	consent = nil,
 	is_web = false
 }
+M.show_consent = function(f) M.consent = f or M.consent; return M.consent end
 
 local function i_closed(inc) 
 	M.after_show()
