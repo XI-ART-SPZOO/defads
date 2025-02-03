@@ -21,7 +21,7 @@ local M = {
 	consent = nil,
 	is_web = false
 }
-M.show_consent = function(f) M.consent = f or M.consent; return M.consent end
+M.show_consent = function() end
 
 local function i_closed(inc) 
 	M.after_show()
@@ -87,10 +87,10 @@ local function ironsource_listener(self, message_id, message)
 			if _DEBUG then pprint(ironsource.validate_integration()) end
 			ads_after_init() 
 			-- if not Data.Options:get("consent") then 
-			if not M.show_consent() then 
-				ironsource.load_consent_view("pre")
-				M.show_consent(true)
-			end
+			-- if not M.show_consent() then 
+			-- 	ironsource.load_consent_view("pre")
+			-- 	M.show_consent(true)
+			-- end
 			-- 	Data.Options:set("consent",true)
 			-- 	Data.Options:save()
 			-- end
