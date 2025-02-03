@@ -299,13 +299,14 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 		print("ADS:INIT --> Init maxsdk")
 		M.mediation = { list = { "maxsdk" }, counter = 1, providers = { "maxsdk" } }
 		maxsdk.set_fb_data_processing_options("LDU", 0, 0)
-		maxsdk.set_has_user_consent(true) -- GDPR
+		-- maxsdk.set_has_user_consent(true) -- GDPR
 		maxsdk.set_is_age_restricted_user(false)
 		maxsdk.set_do_not_sell(false) -- CCPA for all others mediated networks
 		maxsdk.set_muted(false)
 		maxsdk.set_verbose_logging(true)
 		maxsdk.set_callback(maxsdk_listener)
 		maxsdk.initialize()
+		M.show_consent = function() maxsdk.set_has_user_consent(true) end -- GDPR
 	end
 
 	if applovin then 
@@ -332,6 +333,7 @@ function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_
 			ironsource.set_metadata("is_test_suite", "enable")
 		end
 		ironsource.init(app_key)
+		M.show_consent = function() ironsource.load_consent_view("pre") end
 	end
 
 	if fbinstant then
