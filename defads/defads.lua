@@ -19,7 +19,8 @@ local M = {
 	game_stop = function() end,
 	log_ad_revenue = function() end,
 	consent = nil,
-	is_web = false
+	is_web = false,
+	preload = { ads = true, rewarded = true }
 }
 M.show_consent = function() end
 
@@ -47,8 +48,8 @@ end
 
 local function ads_after_init() 
 	print("ADS:INIT --> LOAD ADS")
-	M.load_ads()
-	M.load_rewarded()
+	if M.preload.ads then M.load_ads() end
+	if M.preload.rewarded then M.load_rewarded() end
 end
 
 local function ironsource_listener(self, message_id, message)
@@ -268,6 +269,8 @@ end
 
 function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_stop, log_ad_revenue }
 	ad_ids = ids
+	M.preload.ads = p.preload and p.preload.ads or M.preload.ads
+	M.preload.rewarded = p.preload and p.preload.rewarded or M.preload.rewarded
 
 	if p then 
 	else
