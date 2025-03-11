@@ -269,8 +269,6 @@ end
 
 function M.init(ids,cbs,p) -- cbs = { before_show, after_show, game_start, game_stop, log_ad_revenue }
 	ad_ids = ids
-	M.preload.ads = p and p.preload and p.preload.ads or M.preload.ads
-	M.preload.rewarded = p and p.preload and p.preload.rewarded or M.preload.rewarded
 
 	if p then 
 	else
